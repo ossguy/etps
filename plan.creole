@@ -1,3 +1,21 @@
 = Phase 1 =
 
 SMS over XMPP - building an XMPP component that talks to carriers' REST APIs.
+
+== Overview ==
+
+=== Voice ===
+
+Note that voice is important, but out of scope for this part.  At most, a small carrier-specific tutorial and/or scripts for setting up/logging into the SIP portion of one's account will be provided, since this might not be familiar to users of existing services (ie. a SIP account isn't setup by default with most REST API "carriers" - you need to configure/add an endpoint, then point that to your number somehow using a carrier-specific "application").
+
+=== SMS ===
+
+An XMPP component (XEP-0114) will be built that acts as a bridge between several carriers' REST APIs and the user's XMPP client, allowing the user to send and receive SMS by "chatting" with another JID, the JID representing the phone number of the recipient and being provided by the XMPP component.
+
+Multiple carriers will be supported - at least Bandwidth AP, Voxbone, and VoIP.ms.  These all appear to support emoji and so are useful for this project, which attempts to replace other, emoji-less SMS over XMPP services.
+
+== Architecture ==
+
+At a high level, messages will be received from the carrier by some process that will put them into a Redis list, where they will be further processed and possibly long-term stored until eventually being delivered to the XMPP component that will give them to the user.  It seems that most carriers being supported already store the complete SMS history so storing them more permanently in the Redis database is not strictly necessary, but might be helpful (or at least should be considered going forward).
+
+More specifically, messages will be received from the carrier by a process waiting for HTTP requests (ie. a Ruby script using Sinatra).  This process will LPUSH the JSON-encoded message (including to/from/body/timestamp(s)) into a Redis list at a key named "<phone_number>-from_carrier" or similar.  Then the next process will BRPOPLPUSH the from that list into a "<phone_number>-from_carrier-processing" list, and either save the SMS into some more permanent Redis list, or just deliver it to the XMPP component (a separate process doing its own BRPOPLPUSH on the "<phone_number>-from_carrier-processing" or similar list).

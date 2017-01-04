@@ -1,6 +1,6 @@
 = Phase 1 =
 
-SMS over XMPP - building an XMPP component that talks to carriers' REST APIs.
+SMS over XMPP - building XMPP gateways that talk to carriers' REST APIs.
 
 == Overview ==
 
@@ -10,11 +10,13 @@ Note that voice is important, but out of scope for this part.  At most, a small 
 
 === SMS ===
 
-An XMPP component (XEP-0114) will be built that acts as a bridge between several carriers' REST APIs and the user's XMPP client, allowing the user to send and receive SMS by "chatting" with another JID, the JID representing the phone number of the recipient and being provided by the XMPP component.
+XMPP gateways (XEP-0100) (as I understand it, a superset of components (XEP-0114)) will be built that act as bridges between several carriers' REST APIs and the user's XMPP client, allowing the user to send and receive SMS by "chatting" with another JID, the JID representing the phone number of the recipient and being provided by the XMPP gateway.
 
 Multiple carriers will be supported - at least Bandwidth AP, Voxbone, and VoIP.ms.  While some carriers support SMS over XMPP already, they usually fail to support other important features, such as Unicode (including emoji), MMS, and shortcodes.  It is important to be able to use the above carriers (which support some or most of those features) over XMPP, as they don't provide their own XMPP interface.
 
-Phase 1 will at least support Unicode, and probably shortcodes (possibly using a separate domain presented by the XMPP component, since they aren't E.164 numbers).  It might support MMS, but that will be trickier (though it should be designed so that adding this later will not be unnecessarily difficult).
+The initial plan is to present the gateway to the user as <carrier>.soprani.ca.  For example, the user would perform a service discovery on soprani.ca and find that it provides bandwidth-ap.soprani.ca, voipms.soprani.ca, and voxbone.soprani.ca.  Once one adds the gateway/transport, they'll be prompted for their API credentials (normally token and key) plus the DID they want to use.
+
+Phase 1 will at least support Unicode, and probably shortcodes (using a ;phone-context=[<carrier-name>.]<2-digit-country-code>.phone-context.soprani.ca or similar per RFC 3966, since they aren't E.164 numbers - E.164 numbers would simply be used by themselves as the localpart, ie. +12345678901).  It might support MMS, but that will be trickier (though it should be designed so that adding this later will not be unnecessarily difficult).
 
 == Architecture ==
 

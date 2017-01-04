@@ -1,0 +1,23 @@
+= My initial use case =
+
+Soprani.ca was initially conceived of as a replacement for Google Voice.  As a result, the featureset (at least as implemented at https://github.com/ossguy/sopranica at the time of this writing) roughly matches the non-app/web featureset of Google Voice.  In particular this means forwarding SMS, using a different custom number for each "contact", which handles messages passing through the "external" number (or "Google Voice number").  The "external" number is the only one that contacts should know about - the user's real cell number is hidden through the forwarding setup.
+
+With the above implementation it is then easy to make the "external" number more flexible by enabling other forwarding methods, such as email and XMPP (see below).  Email has been implemented in a currently-uncomitted version of Soprani.ca, while XMPP support is the focus of Phase 1 (see plan.creole).
+
+Note that the first implementation (described above) uses Vitelity for the custom forwarding numbers, and Plivo for the "external" number (as well as, more recently, Bandwidth AP).  This was done to reduce the cost of forwarded SMS (since Vitelity is gratis per-SMS) as there might be many endpoints for each SMS received by the "external" number.
+
+= My other use cases =
+
+It would be nice to use the "external" number directly through XMPP.  I had setup a separate Vitelity number as a forwarding destination with Phase 0 (described above), which allowed me to accomplish the same thing.  But it wasn't a native experience and thus I saw the custom forwarding numbers rather than the real recipients when I sent/received SMS.  Phase 1 (see plan.creole) should solve that.
+
+Mostly I just want to use my computer for SMS and calls, while not having to use some secondary number.  It's always seemed silly to me to have to use a dumb phone keyboard (or worse, a touchscreen) to write the same thing I could type in a quarter the time.  And why use some cell carrier's shoddy network when I could get perfect sound quality using a hard-wired SIP phone.
+
+Really, I don't want to use phone numbers at all (would rather SIP).  But since everyone else uses them, I have to interact with them somehow.
+
+= Other potential use cases =
+
+A main use I see is providing phone numbers in different countries so people can contact you in the cheapest and/or most familiar way possible, while you could reply to any of them from the same phone, and it would be sent out using the correct "external" number.  Phase 0 was designed from the start to do this.
+
+I've explained Soprani.ca to people as kind of like WhatsApp, except the person you message doesn't have to get some stupid app.  But if they want to use some app (ie. XMPP client) they can, and it will be cheaper for them.  So that's another possible use case.
+
+Along with the above, another use case would be for encrypted messages (similar to Signal), with a UI making it very clear to the user whether the message is being sent/received in the clear over SMS or data (very red), sent encrypted with no verification (yellow), or encrypted with verification (green).  The system could determine whether the recipient had Soprani.ca and warn the sender accordingly (ie. with some red screen if the only communication option was unencrypted SMS).
